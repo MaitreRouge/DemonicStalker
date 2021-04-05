@@ -2,8 +2,9 @@
 
 define('PRODUCTION', false);
 
-define('PUBLIC_KEY', '24927dbb7d20790a8c71193a2de5b6a93431f38186b9ad0390021d4d0a6a308a');
-define('BOT_TOKEN', null); #The token of your bot if you plan to use discord api
+define('PUBLIC_KEY', ''); #Public key of your discord application (you might not rly care if that is leaked)
+define('BOT_TOKEN', null); #The token of your bot if you plan to use discord api (you should care if that is leacked :D)
+define('CHANNEL_ID', ''); #Channel id where you want your app to post updates
 
 //For logging error with sentry
 define('SENTRY_DSN', null);
