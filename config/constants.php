@@ -21,3 +21,6 @@ define('IGNORE_TIME', false);
 //WARNING: THIS MAY IMPACT PERFORMANCES A LOT
 //WARNING: DO NOT ENABLE IN PRODUCTION
 define('REQUEST_CATCHER_URL', null);
+
+//Set the key for the PHP API
+define('API_KEY', "");
