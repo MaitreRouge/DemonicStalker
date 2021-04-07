@@ -24,7 +24,8 @@ class AddCommand {
     public function add(Interaction $interaction): InteractionResponse
     {
         $packetId = $interaction->data->options->debugOptions[0]->value;
-        $name = $interaction->data->options->debugOptions[1]->value??null;
+        $transporteur = $interaction->data->options->debugOptions[1]->value;
+        $name = $interaction->data->options->debugOptions[2]->value??null;
 
         if ($this->packetsTable->exists($packetId)) return new InteractionResponse(
             InteractionResponse::TYPE_MESSAGE_WITH_SOURCE,
@@ -32,13 +33,15 @@ class AddCommand {
         );
 
         $v = $this->packetsTable->insert([
-            "packetName" => $name,
-            "packetId" => $packetId
+            "packetName"      => $name,
+            "deliveryService" => $transporteur,
+            "packetId"        => $packetId,
+            "UserId"          => $interaction->member->user->id
         ]);
 
         return new InteractionResponse(
             InteractionResponse::TYPE_MESSAGE_WITH_SOURCE,
-            new InteractionApplicationCommandCallbackData("Le packet avec le numéro de suivi ".$packetId." à bien été enregistré")
+            new InteractionApplicationCommandCallbackData("Le packet avec le numéro de suivi ``".$packetId."`` à bien été enregistré avec le transporteur ``".$transporteur."``")
         );
     }
 
