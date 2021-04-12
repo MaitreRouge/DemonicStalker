@@ -35,7 +35,8 @@
         "altorouter/altorouter": "^2.0",
         "sentry/sdk": "^3.1",
         "kriswallsmith/buzz": "^1.2",
-        "paragonie/halite": "^4.7"
+        "paragonie/halite": "^4.7",
+      "ext-json": "*"
     },
     "require-dev": {
         "middlewares/whoops": "^2",

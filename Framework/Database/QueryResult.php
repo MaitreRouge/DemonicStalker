@@ -10,7 +10,7 @@ class QueryResult implements \ArrayAccess, \Iterator, \Countable {
     /**
      * @var mixed[] Enregistements
      */
-    private array $records = [];
+    public array $records = [];
 
     /**
      * @var null|string

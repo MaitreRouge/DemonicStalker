@@ -30,6 +30,10 @@ $router->addMiddlewares([
 ]);
 
 $router->map(
+    'GET', '/traceAllPackets', 'traceAllPackets',
+    [App\Controllers\ParcelController::class, 'traceAllPackets']
+);
+$router->map(
     'POST', '/endpoint', 'integration.endpoint',
     [SlashCommands\Controllers\AppController::class, 'endpoint']
 );
