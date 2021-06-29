@@ -10,3 +10,4 @@ The code _should_ work if you import the database, and the slash commands as giv
 (look here to [register slash-commands](https://discord.com/developers/docs/interactions/slash-commands#registering-a-command))
 
 If you want to re-use this code, please credit the original author or inspiration :)
+(yes the project is still under GPL-3.0 License)
