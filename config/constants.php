@@ -1,4 +1,5 @@
 <?php
+setlocale(LC_ALL, 'fr_FR');
 
 define('PRODUCTION', false);
 

@@ -9,7 +9,7 @@ class DiscordEmbed {
     /**
      * @var array
      */
-    private array $embed = [
+    public array $embed = [
         "title"       => null,
         "type"        => "rich",
         "description" => null,
@@ -121,7 +121,6 @@ class DiscordEmbed {
             "Content-Type" => "application/json"
         ], $body);
         $response = $this->httpClient->sendRequest($request);
-        if($messageId === "830053489275174972") dd(json_decode($response->getBody()->getContents()));
         return json_decode($response->getBody()->getContents())->id;
     }
 

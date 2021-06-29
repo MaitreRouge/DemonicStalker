@@ -40,8 +40,7 @@ class ParcelController {
         foreach ($packets as $packet){
 
             $embed = (new DiscordEmbed($this->httpClient))
-                ->setTitle("Suivi du colis " . ($packet->packetName !== null ? $packet->packetName : $packet->packetId))
-                ->setDescription("Colis numéro ".$packet->packetId." avec le transporteur ".$packet->deliveryService);
+                ->setTitle("Suivi du colis " . ($packet->packetName !== null ? $packet->packetName : $packet->packetId));
 
             switch ($packet->deliveryService){
                 case "LaPoste":
@@ -55,7 +54,7 @@ class ParcelController {
                         $this->packetsTable->delete($packet->packetId);
                         $this->sendDiscordMessage("<@".$packet->userId.">, le colis avec le numéro de suivi ``".$packet->packetId."`` du transporteur ``La Poste`` est invalide et en conséquent a été supprimé de la base de donnée");
                         break;
-                    } else if($response->getStatusCode() === 429) {
+                    } else if($response->getStatusCode() === 429 or $response->getStatusCode() === 503 or $response->getStatusCode() === 504) {
                         break;
                     } else if($response->getStatusCode() !== 200) {
                         $this->sendDiscordMessage("<@".$packet->userId."> une erreur inconnue (".$response->getStatusCode().") est survenue avec le colis ``".$packet->packetId."``");
@@ -66,12 +65,29 @@ class ParcelController {
                     $timeline = $content->timeline;
                     $events = $content->event;
                     $date = new \DateTime($content->entryDate);
+                    $eta = "---";
+                    $lastUpdate = $timeline[$content->holder];
 
-                    $embed->addField("Derniere mise a jour", $timeline[$content->holder - 1]->shortLabel, false);
+                    if(!$content->isFinal and $content->holder === 4){
+                        if(isset($timeline[4]->date)) {
+                            $eta = (new \DateTime($timeline[4]->date))->format("d/m/Y");
+                        } else {
+                            $eta = "---";
+                        }
+                        foreach ($timeline as $item){
+                            if($item->status){
+                                $lastUpdate = $item;
+                            }
+                        }
+                    }
+
+                    $embed->addField("Numéro du colis", $packet->packetId, true);
+                    $embed->addField("Transporteur", "LaPoste", true);
+                    $embed->addField("Etat du colis", ($content->isFinal ? "Livré" : "En transit"), true);
+                    $embed->addField("Derniere mise a jour", $lastUpdate->shortLabel, false);
                     $embed->addField("Dernier event", $events[0]->label, false);
-                    $embed->addField((isset($content->deliveryDate) ? "Colis livré le" : "Date de livraison estimée"), (isset($content->deliveryDate) ? $content->deliveryDate : "Aujourd'hui ?"), false);
-                    $embed->addField("Colis pris en charge le", $date->format("d/m/Y H:i:s"));
-                    $embed->addField("IsFinal", ($content->isFinal ? "true" : "false"));
+                    $embed->addField("Colis pris en charge le", $date->format("d/m/Y"), true);
+                    $embed->addField((isset($content->deliveryDate) ? "Colis livré le" : "Date de livraison estimée"), (isset($content->deliveryDate) ? (new \DateTime($content->deliveryDate))->format("d/m/Y") : (string)$eta), true);
 
                     switch ($content->holder){
                         case 1:
@@ -91,9 +107,13 @@ class ParcelController {
                     }
 
                     if($packet->messageId === null) {
-                        $embed->sendMessage(CHANNEL_ID);
+                        $mid = $embed->sendMessage(CHANNEL_ID);
+                        $this->packetsTable->update($packet->packetId, [
+                            "messageId" => $mid
+                        ]);
+
                         break;
-                    }
+                    } else {
 
                     $mid = $embed->updadeMessage(CHANNEL_ID, $packet->messageId);
                     $this->packetsTable->update($packet->packetId, [
@@ -101,11 +121,12 @@ class ParcelController {
                     ]);
 
                     break;
+                    }
             }
 
         }
 
-        return http_response_code(201);
+        die('everything went fine (i think)');
     }
 
     private function sendDiscordMessage(string $message): string

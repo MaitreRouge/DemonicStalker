@@ -1,0 +1,30 @@
+{
+	"name": "add",
+	"description": "Ajoute un packet au suivi",
+	"options": [
+		{
+			"name": "id",
+			"description": "Numéro de suivi du packet",
+			"type": 3,
+			"required": true
+		},
+		{
+			"name": "transporteur",
+			"description": "Transporteur du colis",
+			"type": 3,
+			"choices": [
+                {
+                    "name": "La Poste",
+                    "value": "LaPoste"
+                }
+            ],
+			"required": true
+		},
+		{
+			"name": "name",
+			"description": "Ajoute un nom au numéro de suivi, utile pour se souvenir ce qu'on a expédié",
+			"type": 3,
+			"required": false
+		}
+	]
+}
